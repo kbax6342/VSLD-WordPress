@@ -292,13 +292,15 @@ function zipcode_radius(){
 	
 
 	<?php
-	if($_GET['zipcode'] == true){
+
+	
+	if( $_GET['zipcode'] == true){
 		global $wpdb;
 		$results = $wpdb->get_results($wpdb->prepare("SELECT * FROM `old-members` WHERE `co_zipcode`= %s", $_GET['zipcode']));
 		?><div style="display:flex; flex-direction: column;"><?php
 		foreach($results as $members){ 
 		?>	
-		<div style="border-bottom: 2px solid green; display: flex; justify-content: space-between; flex-wrap: wrap;">
+		<div style="border-bottom: 2px solid green; display: flex; justify-content: space-evenly; flex-wrap: wrap;">
 			<div class="name" style="width: 33.33%; min-width: 300px;">
 				<b> <?php echo("$members->firstname $members->lastname");?></b>
 			</div>
@@ -314,6 +316,9 @@ function zipcode_radius(){
 		</div>
 		<?php	}
 	?></div><?php
+	
+	}else{
+	
 	}
 
 	
