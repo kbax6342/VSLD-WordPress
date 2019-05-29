@@ -1,0 +1,45 @@
+footer.site-footer {
+  color: #fff;
+
+  a, a:visited, a:hover, a:active {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  #upper-footer {
+    background-color: #2a2b2a;
+
+    .wrapper {
+      flex-wrap: wrap;
+      align-items: flex-start;
+
+      > div {
+        &:first-of-type {
+          width: 50%
+        }
+
+        width: 25%;
+        padding: 10px;
+        min-width: 250px;
+
+        ul {
+          list-style: none;
+          padding-left: 0;
+        }
+      }
+    }
+  }
+  .site-info {
+    background-color: #305637;
+    
+    .wrapper{
+      min-height: 50px;
+      align-items: center;
+      flex-wrap: wrap;
+
+      > div {
+        min-width: 300px;
+      }
+    }
+  }
+}

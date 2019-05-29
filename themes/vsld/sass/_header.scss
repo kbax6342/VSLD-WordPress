@@ -1,0 +1,74 @@
+body:not(.home) header#masthead { margin-bottom: 75px; }
+#masthead.site-header {
+  border-top: 15px solid;
+  border-color: #366734;
+  background-color: #fff;
+
+  &:before, &:after {
+    display: none;
+  }
+
+  .wrapper{
+    min-height: 75px;
+    align-items: center;
+
+    .site-branding {
+      display: none;
+    }
+
+    nav#menu {
+      height: 25px;
+      width: 100%;
+
+      .logo a {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center center;
+        height: 150px;
+        width: 400px;
+        transition: all 0.5s ease;
+        z-index: 999;
+
+        span {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  nav#menu > #cssmenu > ul#primary-menu > li > a {
+    padding: 10px;
+    font-size: 12px;
+  }
+  #masthead.site-header .wrapper nav#menu .logo a {
+    width: 350px;
+    height: 150px;
+  }
+}
+
+@media screen and (max-width: 1085px) {
+  nav#menu > #cssmenu > ul#primary-menu > li > a {
+    padding: 5px;
+    font-size: 10px;
+  }
+  #masthead.site-header .wrapper nav#menu .logo a {
+    width: 300px;
+    height: 125px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  #masthead.site-header .wrapper {
+    flex-direction: column;
+    
+    .site-branding {
+      display: block;
+    }
+
+    nav#menu .logo {
+      display: none;
+    }
+  }
+}
