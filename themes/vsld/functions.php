@@ -369,7 +369,91 @@ if (!empty($_GET['miles'])) {
 
 	
 	return ob_get_clean();
-	?>
+}
+
+add_shortcode( 'custom_login_form', 'render_login_form' );
+
+/**
+ * A shortcode for rendering the login form.
+ *
+ * @param  array   $attributes  Shortcode attributes.
+ * @param  string  $content     The text content for shortcode. Not used.
+ *
+ * @return string  The shortcode output
+ */
+function render_login_form( $attributes, $content = null ) {
+	// Parse shortcode attributes
+	$default_attributes = array( 'show_title' => false );
+	$attributes = shortcode_atts( $default_attributes, $attributes );
+	$show_title = $attributes['show_title'];
+
+	 if ( !is_user_logged_in() ) {
+			return __( 'You are already signed in.', 'personalize-login' );
+ }
+	 
+	// Pass the redirect parameter to the WordPress login functionality: by default,
+	// don't specify a redirect, but if a valid redirect URL has been passed as
+	// request parameter, use it.
+	$attributes['redirect'] = '';
+	if ( isset( $_REQUEST['redirect_to'] ) ) {
+			$attributes['redirect'] = wp_validate_redirect( $_REQUEST['redirect_to'], $attributes['redirect'] );
+	}
+	 
+	// Render the login form using an external template
+	return get_template_html( 'login_form', $attributes );
+}
+
+function get_template_html( $template_name, $attributes = null ) {
+	if ( ! $attributes ) {
+			$attributes = array();
+	}
+
+	ob_start();?>
+
+
+
+	<div class="login-form-container">
+
+	
+					<div class="login-wrapper">
+
+					<div class="login-title">
+						<h2>Member Login</h2>
+					</div>
+
+					
+
+						<!--The contents of the form-->
+						<div>
+								<?php
+										wp_login_form(
+												array(
+														'label_username' =>  'Email:' ,
+														'label_password' => 'Password:',
+														'label_log_in' =>  'Sign In' ,
+														'id_submit' => 'front-end-login',
+														'form_id' => 'member-login-form',
+														'redirect' => '<a href="www.vsld.test">Return To Hompage</a>' 
+													),
+												);
+								?>
+						</div>
+						
+
+						<!--Forgot Password Link-->
+						<a class="forgot-password" href="<?php echo wp_lostpassword_url(); ?>">
+								<?php _e( 'Forgot your password?', 'personalize-login' ); ?> 
+						</a>
+					</div>
+					
+
+		</div>
+
+											
 
 <?php
+	$html = ob_get_contents();
+	ob_end_clean();
+
+	return $html;
 }
