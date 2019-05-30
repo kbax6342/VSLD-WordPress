@@ -256,25 +256,8 @@ class CSS_Menu_Maker_Walker extends Walker {
 //Write a function that will call the shortcode. [zipcode_radius_search]
 add_shortcode('zipcode_radius_search','zipcode_radius');
 
-
+//Designer Search
 function zipcode_radius(){
-	//Check if there is data with the submit value
-	
-
-	 
-	
-
-	
-          
-		
-	
-	//Check and see if the result value is correct
-	// if($results){
-	// 	echo "Name: "$results("firstname");
-	// }
-
-	
-	
 	
 	ob_start();
     ?> <form style="width:100%; padding-left:25%" action="<?php the_permalink();?>" name="zipcode-radius" method="get">
@@ -292,11 +275,50 @@ function zipcode_radius(){
 	
 
 	<?php
-
-	
-	if( $_GET['zipcode'] == true){
+	//function to calculate the radius
+	function calculate_radius($latitude,$longitude){
 		global $wpdb;
-		$results = $wpdb->get_results($wpdb->prepare("SELECT * FROM `old-members` WHERE `co_zipcode`= %s", $_GET['zipcode']));
+	return $wpdb->get_results($wpdb->prepare("SELECT
+						old_members.*,
+						zip_distance.DISTANCE
+				FROM
+						old_members
+						LEFT JOIN (
+								SELECT
+										zip_code,
+										(
+												6371 * ACOS(
+														COS(RADIANS(%s)) * COS(
+																RADIANS(zipcode_data.latitude)
+														) * COS(
+																RADIANS(zipcode_data.longitude) - RADIANS(%s)
+														) + SIN(RADIANS(%s)) * SIN(
+																RADIANS(zipcode_data.latitude)
+														)
+												)
+										) AS DISTANCE
+								FROM
+										zipcode_data
+								HAVING
+										DISTANCE <= %s
+						) as zip_distance ON zip_distance.zip_code = old_members.co_zipcode
+				WHERE
+						zip_distance.zip_code IS NOT NULL
+				ORDER BY
+						zip_distance.DISTANCE ASC	", [$latitude, $longitude, $latitude, $_GET['miles']]
+		));
+
+	}
+
+
+	if( isset($_GET['zipcode'])){ //the == true is not required. Won't break it but the if checks for true/false already
+		global $wpdb;
+		$cordinates = $wpdb->get_row($wpdb->prepare("SELECT * FROM `zipcode_data` WHERE `zip_code`= %s", $_GET['zipcode']));
+		$latitude = $cordinates->latitude;
+		$longitude = $cordinates->longitude;
+
+		$results = calculate_radius($latitude,$longitude);
+
 		?><div style="display:flex; flex-direction: column;"><?php
 		foreach($results as $members){ 
 		?>	
@@ -316,7 +338,31 @@ function zipcode_radius(){
 		</div>
 		<?php	}
 	?></div><?php
+
+	//Validates the zipcode input information
+if (!empty($_GET['zipcode'])) {
 	
+	$number = $_GET['zipcode'];
+	$number = filter_var($number, FILTER_VALIDATE_INT);
+
+	if ($number === false) {
+		exit('Invalid Number');
+	}
+
+}
+
+//Validates the miles input information
+if (!empty($_GET['miles'])) {
+	
+	$number = $_GET['miles'];
+	$number = filter_var($number, FILTER_VALIDATE_INT);
+
+	if ($number === false) {
+		exit('Invalid Number');
+	}
+
+}
+
 	}else{
 	
 	}
@@ -326,27 +372,4 @@ function zipcode_radius(){
 	?>
 
 <?php
-
-//Validates the zipcode input information
-if (!empty($_GET['zipcode'])) {
-	
-	$number = $_GET['zipcode'];
-	$number = filter_var($number, FILTER_VALIDATE_INT);
-
-	if ($number === false) {
-		exit('Invalid Integer');
-	}
-
-}
-//Validates the miles input information
-if (!empty($_GET['miles'])) {
-	
-	$number = $_GET['miles'];
-	$number = filter_var($number, FILTER_VALIDATE_INT);
-
-	if ($number === false) {
-		exit('Invalid Integer');
-	}
-
-}
 }
