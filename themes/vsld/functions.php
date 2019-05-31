@@ -457,3 +457,53 @@ function get_template_html( $template_name, $attributes = null ) {
 
 	return $html;
 }
+
+
+/**
+ * Redirect user after successful login.
+ *
+ * @param string $redirect_to URL to redirect to.
+ * @param string $request URL the user is coming from.
+ * @param object $user Logged user's data.
+ * @return string
+ */
+
+function my_login_redirect( $redirect_to, $request, $user ) {
+	//is there a user to check?
+	if (isset($user->roles) && is_array($user->roles)) {
+			//check for subscribers
+			if (in_array('Member', $user->roles)) {
+					// redirect them to another URL, in this case, the homepage 
+					$redirect_to = home_url('members-page');
+			}
+	}
+
+	return $redirect_to;
+}
+
+add_filter( 'login_redirect', 'my_login_redirect',10,3);
+
+
+//Creating a new member role
+ add_role(
+	'Member',
+	__( 'Member Role' ),
+	array(
+			'read'         => true,  // true allows this capability
+	)
+);
+
+
+//function to bring in the nav menu
+
+function register_my_menu() {
+  register_nav_menu('page-members-menu',__( 'Members Menu' ));
+}
+add_action( 'init', 'register_my_menu' );
+ 
+
+
+
+
+
+

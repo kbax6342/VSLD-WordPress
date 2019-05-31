@@ -1,0 +1,152 @@
+$primary-color: #366734;
+$white-font: #ffffff;
+
+/****************************
+Styling for the members login
+*****************************/
+
+
+.login-form-container{
+    display: flex;
+    width: 100%;
+    min-width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 34%;
+    
+}
+
+.login-title{
+    padding-left:35%;
+    border-bottom: solid $primary-color 1px;
+    h2{
+        margin-bottom:0px;
+    }
+    background-color: $primary-color;
+    width: 397px;
+    margin-left: -42px;
+    color: $white-font;
+
+}
+
+#user_login{
+    margin-left: 30px;
+}
+
+
+.login-wrapper{
+    background-color: #d2d4d8;
+    padding: 40px;
+    width: 397px;
+    border: solid black 1px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    box-shadow: 5px 5px 18px #888888;
+}
+
+#front-end-login{
+    font-size: larger;
+    margin-left: 10%;
+    color: white;
+    background-color: #366734;
+    width: 80%;
+    height: 43px;
+
+}
+/********************************
+Styling for the Members Dashboard 
+that the members view once they log
+into the site.
+********************************/
+
+.page-members-menu{
+    
+    display: flex;
+    flex-wrap: wrap;
+    margin-top:0px;
+    margin-bottom: 0px;
+    position: relative;
+    z-index: 1000;
+    padding: 11px 0 0;
+    }
+    .page-members-menu{
+  
+    margin: 0;
+    padding: 0;
+    }
+
+    .page-members-menu li{
+    border-radius: 25px;
+    text-transform: uppercase;
+    height:3.5em;
+    float: left;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0px;
+    width: 18%;
+    position: relative;
+    list-style-type: none;
+    margin: 10px 2px 10px 2px;
+    }
+    
+    .page-members-menu li a{
+    height:4em;
+    border-radius: 25px;
+    text-transform: uppercase;
+    background-color:$primary-color;
+    color:$white-font;
+    display: block;
+    padding: 10px 15px 10px 15px;
+    text-decoration: none;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    }
+    .page-members-menu li a:hover, .page-members-menu li.current_page_item a{
+        color: $primary-color !important;
+        border-radius: 27px;
+        border: solid 6px;
+        background: $white-font;
+        border-color: #f6b93b !important;
+        transition: all 0.4s ease 0s;
+    }
+    
+
+
+
+@media screen and (max-width: 550px){
+
+    .login-form-container{
+        padding-left: 0px;
+        margin-bottom: 10px;
+        
+    }
+
+    .login-wrapper{
+        width: 370px;
+    }
+
+    #user_login{
+        margin-left: 20px;
+    }
+    
+    #user_pass{
+        margin-left: 20px;
+    }
+
+    .login-title{
+        width: 370px;
+    }
+}
+
+@media (min-width:550px) and (max-width: 1112px){
+
+    .login-form-container{
+        padding-left: 20%;
+        margin-bottom: 10px;
+    }
+
+}
+

@@ -1,6 +1,6 @@
 <?php
 /**
- * The main template file
+ *Template Name: Members Template 
  *
  * This is the most generic template file in a WordPress theme
  * and one of the two required files for a theme (the other being style.css).
@@ -14,5 +14,11 @@
 
 get_header();
 ?>
+<div class="nav-container">
+
+<?php wp_nav_menu( array( 'theme_location' => 'page-members-menu',
+                        'menu_class'=> 'page-members-menu' ) ); ?>
+                        
+</div>
 
 <?php get_footer();
