@@ -382,7 +382,6 @@ add_shortcode( 'custom_login_form', 'render_login_form' );
  * @return string  The shortcode output
  */
 function render_login_form( $attributes, $content = null ) {
-	// Parse shortcode attributes
 	$default_attributes = array( 'show_title' => false );
 	$attributes = shortcode_atts( $default_attributes, $attributes );
 	$show_title = $attributes['show_title'];
@@ -398,7 +397,18 @@ function render_login_form( $attributes, $content = null ) {
 	if ( isset( $_REQUEST['redirect_to'] ) ) {
 			$attributes['redirect'] = wp_validate_redirect( $_REQUEST['redirect_to'], $attributes['redirect'] );
 	}
-	 
+
+	 // Error messages
+$errors = array();
+if ( isset( $_REQUEST['login'] ) ) {
+    $error_codes = explode( ',', $_REQUEST['login'] );
+ 
+    foreach ( $error_codes as $code ) {
+        $errors []= get_error_message( $code );
+    }
+}
+$attributes['errors'] = $errors;
+
 	// Render the login form using an external template
 	return get_template_html( 'login_form', $attributes );
 }
@@ -421,6 +431,14 @@ function get_template_html( $template_name, $attributes = null ) {
 						<h2>Member Login</h2>
 					</div>
 
+						<!-- Show errors if there are any -->
+								<?php if ( count( $attributes['errors'] ) > 0 ) : ?>
+										<?php foreach ( $attributes['errors'] as $error ) : ?>
+												<p class="login-error">
+														<?php echo $error; ?>
+												</p>
+										<?php endforeach; ?>
+								<?php endif; ?>
 					
 
 						<!--The contents of the form-->
@@ -500,10 +518,98 @@ function register_my_menu() {
   register_nav_menu('page-members-menu',__( 'Members Menu' ));
 }
 add_action( 'init', 'register_my_menu' );
+
+
+//Custome function to redirect the user to the custom login screen. 
+function redirect_to_custom_login() {
+	if ( $_SERVER['REQUEST_METHOD'] == 'GET' ) {
+			$redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : null;
+	 
+			if ( is_user_logged_in() ) {
+					$this->redirect_logged_in_user( $redirect_to );
+					exit;
+			}
+
+			// The rest are redirected to the login page
+			$login_url = home_url( 'member-login' );
+			if ( ! empty( $redirect_to ) ) {
+					$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
+			}
+
+			wp_redirect( $login_url );
+			exit;
+	}
+}
+
+
+
+add_action( 'login_form_login', 'redirect_to_custom_login' );
  
+/**
+ * Redirect the user after authentication if there were any errors.
+ *
+ * @param Wp_User|Wp_Error  $user       The signed in user, or the errors that have occurred during login.
+ * @param string            $username   The user name used to log in.
+ * @param string            $password   The password used to log in.
+ *
+ * @return Wp_User|Wp_Error The logged in user, or error information if there were errors.
+ */
+function maybe_redirect_at_authenticate( $user,$password ) {
+	// Check if the earlier authenticate filter (most likely, 
+	// the default WordPress authentication) functions have found errors
+	if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+			if ( is_wp_error( $user ) ) {
+					$error_codes = join( ',', $user->get_error_codes() );
+
+					$login_url = home_url( 'members-login' );
+					$login_url = add_query_arg( 'login', $error_codes, $login_url );
+
+					wp_redirect( $login_url );
+					exit;
+			}
+	}
+
+	return $user;
+}
 
 
 
+add_filter( 'authenticate', 'maybe_redirect_at_authenticate',201,3);
+
+function get_error_message( $error_code ) {
+	switch ( $error_code ) {
+			case 'empty_username':
+					return __( 'You do have an email address, right?', 'personalize-login' );
+					break;
+			case 'empty_password':
+					return __( 'You need to enter a password to login.', 'personalize-login' );
+					break;
+			case 'invalid_username':
+					return __(
+							"We don't have any users with that email address. Maybe you used a different one when signing up?",
+							'personalize-login'
+					);
+					break;
+			case 'incorrect_password':
+					$err = __(
+							"The password you entered wasn't quite right. <a href='%s'>Did you forget your password</a>?",
+							'personalize-login'
+					);
+					return sprintf( $err, wp_lostpassword_url() );
+					break;
+			default:
+					break;
+	}
+	 
+	return __( 'An unknown error occurred. Please try again later.', 'personalize-login' );
+}
 
 
 
+add_action('after_setup_theme', 'remove_admin_bar');
+ 
+function remove_admin_bar() {
+if (!current_user_can('administrator') && !is_admin()) {
+  show_admin_bar(false);
+}
+}

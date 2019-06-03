@@ -1692,15 +1692,11 @@ into the site.
   display: flex;
   flex-wrap: wrap;
   margin-top: 0px;
+  margin-left: 6%;
   margin-bottom: 0px;
   position: relative;
   z-index: 1000;
   padding: 11px 0 0;
-}
-
-.page-members-menu {
-  margin: 0;
-  padding: 0;
 }
 
 .page-members-menu li {
@@ -1709,7 +1705,7 @@ into the site.
   height: 3.5em;
   float: left;
   font-size: 19px;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0px;
   width: 18%;
   position: relative;
@@ -1724,6 +1720,7 @@ into the site.
   background-color: #366734;
   color: #ffffff;
   display: block;
+  font-size: initial;
   padding: 10px 15px 10px 15px;
   text-decoration: none;
   -webkit-transition: all 0.3s ease-in-out;
@@ -1740,6 +1737,12 @@ into the site.
   background: #ffffff;
   border-color: #f6b93b !important;
   transition: all 0.4s ease 0s;
+}
+
+.title-section {
+  display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
 @media screen and (max-width: 550px) {
