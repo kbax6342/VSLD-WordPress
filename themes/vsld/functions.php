@@ -386,7 +386,7 @@ function render_login_form( $attributes, $content = null ) {
 	$attributes = shortcode_atts( $default_attributes, $attributes );
 	$show_title = $attributes['show_title'];
 
-	 if ( !is_user_logged_in() ) {
+	 if ( is_user_logged_in() ) {
 			return __( 'You are already signed in.', 'personalize-login' );
  }
 	 
@@ -444,27 +444,24 @@ function get_template_html( $template_name, $attributes = null ) {
 						<!--The contents of the form-->
 						<div>
 								<?php
-										wp_login_form(
-												array(
-														'label_username' =>  'Email:' ,
-														'label_password' => 'Password:',
-														'label_log_in' =>  'Sign In' ,
-														'id_submit' => 'front-end-login',
-														'form_id' => 'member-login-form',
-														'redirect' => '<a href="www.vsld.test">Return To Hompage</a>' 
-													),
-												);
+									wp_login_form(
+										array(
+											'label_username' =>  'Email:' ,
+											'label_password' => 'Password:',
+											'label_log_in' =>  'Sign In' ,
+											'id_submit' => 'front-end-login',
+											'form_id' => 'member-login-form',
+											'redirect' => '<a href="www.vsld.test">Return To Hompage</a>' 
+										)
+									);
 								?>
+								
 						</div>
-						
-
 						<!--Forgot Password Link-->
 						<a class="forgot-password" href="<?php echo wp_lostpassword_url(); ?>">
 								<?php _e( 'Forgot your password?', 'personalize-login' ); ?> 
 						</a>
 					</div>
-					
-
 		</div>
 
 											
@@ -488,10 +485,10 @@ function get_template_html( $template_name, $attributes = null ) {
 
 function my_login_redirect( $redirect_to, $request, $user ) {
 	//is there a user to check?
-	if (isset($user->roles) && is_array($user->roles)) {
-			//check for subscribers
+	if (isset($user->roles) && is_array($user->rorles)) {
+			//check for subscribersr
 			if (in_array('Member', $user->roles)) {
-					// redirect them to another URL, in this case, the homepage 
+					// redirect them to another URL, in trhis case, the homepage 
 					$redirect_to = home_url('members-page');
 			}
 	}
@@ -531,7 +528,7 @@ function redirect_to_custom_login() {
 			}
 
 			// The rest are redirected to the login page
-			$login_url = home_url( 'member-login' );
+			$login_url = home_url( 'members-page' );
 			if ( ! empty( $redirect_to ) ) {
 					$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
 			}
@@ -561,7 +558,7 @@ function maybe_redirect_at_authenticate( $user,$password ) {
 			if ( is_wp_error( $user ) ) {
 					$error_codes = join( ',', $user->get_error_codes() );
 
-					$login_url = home_url( 'members-login' );
+					$login_url = home_url( 'members-page' );
 					$login_url = add_query_arg( 'login', $error_codes, $login_url );
 
 					wp_redirect( $login_url );
@@ -609,7 +606,31 @@ function get_error_message( $error_code ) {
 add_action('after_setup_theme', 'remove_admin_bar');
  
 function remove_admin_bar() {
-if (!current_user_can('administrator') && !is_admin()) {
-  show_admin_bar(false);
+	if (!current_user_can('administrator') && !is_admin()) {
+		show_admin_bar(false);
+	}
 }
+
+add_filter( 'login_redirect','redirect_after_login', 10, 3 );
+
+function redirect_after_login( $redirect_to, $requested_redirect_to, $user ) {
+	$redirect_url = home_url();
+
+	if ( ! isset( $user->ID ) ) {
+			return $redirect_url;
+	}
+
+	if ( user_can( $user, 'manage_options' ) ) {
+			// Use the redirect_to parameter if one is set, otherwise redirect to admin dashboard.
+			if ( $requested_redirect_to == '' ) {
+					$redirect_url = admin_url();
+			} else {
+					$redirect_url = $requested_redirect_to;
+			}
+	} else {
+			// Non-admin users always go to their account page after login
+			$redirect_url = home_url( 'members-page' );
+	}
+
+	return wp_validate_redirect( $redirect_url, home_url() );
 }

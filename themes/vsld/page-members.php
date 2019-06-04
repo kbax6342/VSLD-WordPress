@@ -37,10 +37,11 @@ if(is_user_logged_in()){
                     <h1><?php 
                     if(is_page('members-page') == false ){
                        the_title();
+                       ?><hr><?php
                     }
                     ;?></h1>
                </div>
-               <hr>
+               
 
 				<?php the_content(); ?>
 			</div><!-- .entry-content -->
@@ -64,8 +65,13 @@ if(is_user_logged_in()){
     // $attributes = shortcode_atts( $default_attributes, $attributes );
 		// render_login_form($attributes, $content = null);
 		?>
-
-		<?php echo do_shortcode('[custom_login_form]'); ?>
+		<div id="primary" class="content-area">
+			<main id="main" class="site-main">
+				<div class="entry-content">
+					<?php echo do_shortcode('[custom_login_form]'); ?>
+				</div>
+			</main><!-- #main -->
+		</div><!-- #primary -->
 <?php
 }
 get_footer();

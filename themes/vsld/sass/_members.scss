@@ -8,11 +8,9 @@ Styling for the members login
 
 .login-form-container{
     display: flex;
-    width: 100%;
-    min-width: 100%;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 34%;
+    justify-content: space-around;
+    margin: 120px 0px 100px 0px;
+   
     
 }
 
@@ -154,3 +152,4 @@ into the site.
 
 }
 
+ 
